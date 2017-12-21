@@ -67,7 +67,9 @@
                 <preferred-size width="250" height="50"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <font size="20"/>
+            </properties>
           </component>
         </children>
       </grid>
@@ -122,16 +124,16 @@
         </constraints>
         <properties>
           <font size="18"/>
-          <text value="在线人数:20"/>
+          <text value="在线人数:0"/>
         </properties>
       </component>
-      <component id="ef58c" class="javax.swing.JLabel">
+      <component id="ef58c" class="javax.swing.JLabel" binding="Lable_serverisstart">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font size="18"/>
-          <text value="服务器运行时间"/>
+          <text value="已停止"/>
         </properties>
       </component>
     </children>

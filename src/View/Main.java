@@ -26,6 +26,7 @@ public class Main {
     private static Socket s;
 
     public Main() {
+        JPanel_chatwindow.setVisible(false);
         Thread t = new Thread(new ClientReciveThread(s,textArea_msglist));
         t.start();
 
@@ -34,19 +35,25 @@ public class Main {
                 Message message = new Message();
                 message.setContent(textField_msgsend.getText());
                 try {
+                    message.setSender(Userdao.getusernamebyaccount(account));
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+                try {
                     ClientReciveThread.clientsendmsg(message);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-
                 textArea_msglist.append(textField_msgsend.getText()+"\n\r");
                 textField_msgsend.setText("");
             }
         });
+
         list1.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
 //                System.out.println(list1.getAnchorSelectionIndex());
 //                System.out.println(list1.getSelectedValue());
+                JPanel_chatwindow.setVisible(true);
                 Lable_name.setText(list1.getSelectedValue().toString());
                 Chatwindowcollection.addJPanel(account,JPanel_chatwindow);
                 System.out.println(account);
@@ -55,6 +62,17 @@ public class Main {
     }
 
     public static void RunMain(String account1, Socket socket) throws SQLException {
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
         JFrame frame = new JFrame("TIM_Talk    "+new Userdao().getusernamebyaccount(account1));
         account = account1;
         s = socket;

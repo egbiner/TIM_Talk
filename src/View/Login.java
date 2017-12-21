@@ -59,7 +59,8 @@ public class Login {
         oos.writeObject(message);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         JFrame frame = new JFrame("Login");
         jFramemod = frame;
         frame.setContentPane(new Login().JPanel1);

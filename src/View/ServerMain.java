@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -21,17 +20,20 @@ public class ServerMain {
     private JTextField textField1_msgwrite;
     private JButton button_sendmsg;
     private JLabel Lable_usersnum;
+    private JLabel Lable_serverisstart;
     private Socket s;
+    private ServerSocket serverSocket;
 
     public ServerMain() {
         Button_start.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 try {
-                    ServerSocket serverSocket = new ServerSocket(2333);
+                    serverSocket = new ServerSocket(2333);
                     String account ="";
-                    Thread t = new Thread(new ServerThread(serverSocket,Lable_usersnum,textArea1_msglist,account));
+                    Thread t = new Thread(new ServerThread(serverSocket,Lable_usersnum,textArea1_msglist,list_users,Lable_usersnum,account));
                     t.start();
                     Button_start.setEnabled(false);
+                    Lable_serverisstart.setText("运行中");
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -40,7 +42,14 @@ public class ServerMain {
         });
         Button_stop.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-
+                ServerThread.closeserver();
+                try {
+                    serverSocket.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                Lable_serverisstart.setText("已停止");
+                Button_start.setEnabled(true);
             }
         });
         button_sendmsg.addMouseListener(new MouseAdapter() {
@@ -56,7 +65,8 @@ public class ServerMain {
         });
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         JFrame frame = new JFrame("ServerMain");
         frame.setContentPane(new ServerMain().JPanle1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
