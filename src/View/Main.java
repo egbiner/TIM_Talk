@@ -22,23 +22,29 @@ public class Main {
     private JLabel Lable_name;
     private JLabel Lable_usersnum;
     private JPanel JPanel_chatwindow;
+    private JTabbedPane tabbedPane1;
+    private JList list2;
     private static String account;
     private static Socket s;
 
-    public Main() {
-        JPanel_chatwindow.setVisible(false);
-        Thread t = new Thread(new ClientReciveThread(s,textArea_msglist));
+    public Main() throws SQLException {
+//        JPanel_chatwindow.setVisible(false);
+        Thread t = new Thread(new ClientReciveThread(s,textArea_msglist,list1,list2,account));
         t.start();
 
         button_send.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 Message message = new Message();
                 message.setContent(textField_msgsend.getText());
+                message.setType("personal");
+                message.setSender(account);
                 try {
-                    message.setSender(Userdao.getusernamebyaccount(account));
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
+                    message.setGetter(list1.getSelectedValue().toString());
+                }catch (Exception e1){
+                    textArea_msglist.append("请选择发送对象\n\r");
+                    return;
                 }
+
                 try {
                     ClientReciveThread.clientsendmsg(message);
                 } catch (IOException e1) {
@@ -53,10 +59,14 @@ public class Main {
             public void mouseClicked(MouseEvent e) {
 //                System.out.println(list1.getAnchorSelectionIndex());
 //                System.out.println(list1.getSelectedValue());
-                JPanel_chatwindow.setVisible(true);
+//                JPanel_chatwindow.setVisible(true);
                 Lable_name.setText(list1.getSelectedValue().toString());
                 Chatwindowcollection.addJPanel(account,JPanel_chatwindow);
-                System.out.println(account);
+            }
+        });
+        list2.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                Lable_name.setText(list2.getSelectedValue().toString());
             }
         });
     }
@@ -79,18 +89,10 @@ public class Main {
         frame.setContentPane(new Main().JPanel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(1000,600));
-        frame.setLocation(500,200);
+        frame.setLocation(200,200);
         frame.pack();
         frame.setVisible(true);
 
     }
 
-//    public static void main(String[] args) {
-//        JFrame frame = new JFrame("Main");
-//        frame.setContentPane(new Main().JPanel1);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setPreferredSize(new Dimension(1000,600));
-//        frame.pack();
-//        frame.setVisible(true);
-//    }
 }

@@ -23,6 +23,38 @@ public class Userdao {
         ps.setString(3, u.getEmail());
         return ps.executeUpdate();
     }
+    /**
+     * 获取用户的好友
+     */
+    public static String getfriend(String account) throws SQLException {
+        Connection con = DButil.getConn();
+        String sql = "SELECT friend FROM user WHERE account = ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1,account);
+        ResultSet rs =  ps.executeQuery();
+        if (rs.next()){
+            return rs.getString("friend");
+        }else{
+            return "error";
+        }
+
+    }
+
+    /**
+     * 获取用户群
+     */
+    public static String getgroup(String account) throws SQLException {
+        Connection conn = DButil.getConn();
+        String sql = "SELECT groups FROM user where account = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1,account);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()){
+            return rs.getString("groups");
+        }else{
+            return "error";
+        }
+    }
 
     /**
      * 传入用户对象对用户进行更新
@@ -54,7 +86,7 @@ public class Userdao {
         ps.execute();
     }
     /**
-     * 通过账号获取用户名
+     * 通过账号获取
      */
     public static String getusernamebyaccount(String account) throws SQLException {
         Connection conn = DButil.getConn();
@@ -64,6 +96,21 @@ public class Userdao {
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             return rs.getString("username");
+        }else{
+            return new String("error");
+        }
+    }
+    /**
+     * 通过用户名
+     */
+    public static String getaccountbyusername(String username) throws SQLException {
+        Connection conn = DButil.getConn();
+        String sql = "SELECT account FROM user WHERE username = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1,username);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getString("account");
         }else{
             return new String("error");
         }

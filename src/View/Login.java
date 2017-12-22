@@ -1,6 +1,5 @@
 package View;
 
-import client.ClientReciveThread;
 import dao.Userdao;
 import model.Message;
 import model.User;
@@ -66,7 +65,7 @@ public class Login {
         frame.setContentPane(new Login().JPanel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(500,320));
-        frame.setLocation(750,350);
+        frame.setLocation(250,350);
         frame.pack();
         frame.setVisible(true);
     }

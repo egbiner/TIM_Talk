@@ -1,5 +1,7 @@
 package server;
 
+import client.ClientReciveThread;
+import dao.Userdao;
 import model.Message;
 
 import javax.swing.*;
@@ -30,20 +32,31 @@ public class ServerReciveThread implements Runnable{
             try {
                 ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
                 Message message = (Message) ois.readObject();
+                /**
+                 * 实现群发
+                 */
+                if (message.getType().equals("group")){
+                    ServerThread.sendmsgtoall(message);
+                }else if (message.getType().equals("personal")){
+                    ServerThread.sendmsgpersonal(message);
+                }
 
-
-                textArea.append(message.getSender()+":"+message.getContent()+"\n\r");
+                textArea.append(Userdao.getusernamebyaccount(message.getSender())+": to :"+message.getGetter()+":"+message.getContent()+"\n\r");
 
             } catch (IOException e) {
                 textArea.append("客户端"+account+"已经断开连接\n\r");
                 ServerCollection.remove(account);
+
                 try {
                     ServerThread.setonlines(ServerCollection.GetOnline());
+//                    ServerThread.sendonlines();
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
                 break;
             } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }

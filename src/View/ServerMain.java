@@ -57,6 +57,7 @@ public class ServerMain {
                 Message message = new Message();
                 message.setContent(textField1_msgwrite.getText());
                 message.setSender("SystemInfo");
+                message.setType("normal");
                 ServerThread.serversendmsg(message);
 
                 textArea1_msglist.append(message.getContent()+"\n\r");
@@ -71,7 +72,7 @@ public class ServerMain {
         frame.setContentPane(new ServerMain().JPanle1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(1000,600));
-        frame.setLocation(500,250);
+        frame.setLocation(800,250);
         frame.pack();
         frame.setVisible(true);
     }

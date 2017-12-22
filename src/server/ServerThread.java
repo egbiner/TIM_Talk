@@ -59,17 +59,17 @@ public class ServerThread implements Runnable{
                 recivelogininfo(s);
                 ServerReciveThread serverReciveThread = new ServerReciveThread(account,s,label,textArea);
                 ServerCollection.add(account,serverReciveThread);
-
-                setonlines(ServerCollection.GetOnline());
-
                 Thread t = new Thread(serverReciveThread);
                 t.start();
+
+                setonlines(ServerCollection.GetOnline());
+//                sendonlines();
+
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (SQLException e) {
-                //setonlines
                 e.printStackTrace();
             }
 
@@ -80,6 +80,9 @@ public class ServerThread implements Runnable{
         isstart = false;
     }
 
+    /**
+     *服务器自己更新在线用户
+     */
     public static void setonlines(String onlines) throws SQLException {
         String[] strings = onlines.split(" ");
         DefaultListModel<String> listModel = new DefaultListModel<String>();
@@ -88,5 +91,43 @@ public class ServerThread implements Runnable{
         }
         Lable_usersnum.setText("在线人数:"+listModel.size());
         list_users.setModel(listModel);
+    }
+
+    /**
+     * 向客户端发送更新在线用户
+     */
+    public static void sendonlines() throws IOException {
+        Message message = new Message();
+        message.setContent(ServerCollection.GetOnline());
+        message.setType("setonline");
+        String[] strings = ServerCollection.GetOnline().split(" ");
+        for (String str:strings) {
+            ServerReciveThread serverReciveThread = ServerCollection.get(str);
+            ObjectOutputStream oos = new ObjectOutputStream(serverReciveThread.getSocket().getOutputStream());
+            oos.writeObject(message);
+        }
+    }
+
+    /**
+     *服务器转发群消息 不包括发送消息的人
+     */
+    public static void sendmsgtoall(Message message) throws IOException {
+        String[] onlines = ServerCollection.GetOnline().split(" ");
+        for (String online:onlines) {
+            if (online.equals(message.getSender())){ //跳过发送者
+                continue;
+            }
+            ServerReciveThread serverReciveThread = ServerCollection.get(online);
+            ObjectOutputStream oos = new ObjectOutputStream(serverReciveThread.getSocket().getOutputStream());
+            oos.writeObject(message);
+        }
+    }
+    /**
+     * 服务器转发私人消息
+     */
+    public static void sendmsgpersonal(Message message) throws SQLException, IOException {
+        ServerReciveThread serverReciveThread = ServerCollection.get(Userdao.getaccountbyusername(message.getGetter()));
+        ObjectOutputStream oos = new ObjectOutputStream(serverReciveThread.getSocket().getOutputStream());
+        oos.writeObject(message);
     }
 }
