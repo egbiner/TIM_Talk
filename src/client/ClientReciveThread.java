@@ -77,10 +77,24 @@ public class ClientReciveThread implements Runnable{
                     ChatContentcollection.addContent(message.getSender(), content);
                     textArea.setText(ChatContentcollection.getContent(message.getSender()));
                     //选中当前发送消息的人
-                    jList_onlines.setSelectedValue(Userdao.getusernamebyaccount(message.getSender()),false);
+                    jList_onlines.setSelectedValue(Userdao.getusernamebyaccount(message.getSender()),true);
 
-                }else {
+                }else if (message.getType().equals("group")){
                     //TODO 群发
+                    //此处不应该为getSender
+                    //message.getGetter()为群号
+                    String content = ChatContentcollection2.getContent(Groupdao.getgroupnumber(message.getGetter()));
+                    if (content == null) {
+                        content = "";
+                    }
+                    content += Userdao.getusernamebyaccount(message.getSender()) + "  " + message.getTime() + " \n\r " + message.getContent() + "\n\r";
+                    ChatContentcollection2.addContent(Groupdao.getgroupnumber(message.getGetter()), content);
+
+                    textArea.setText(ChatContentcollection2.getContent(Groupdao.getgroupnumber(message.getGetter())));
+                    jList_groups.setSelectedValue(message.getGetter(),true);
+
+                }else{
+                    textArea.append("一个不为人知的消息类型突然冒出!令人感到害怕!\n\r");
                 }
 
 //                textArea.append(Userdao.getusernamebyaccount(message.getSender()) + "  " + message.getTime()+ " \n\r" + message.getContent() + "\n\r");

@@ -33,7 +33,7 @@ public class ServerReciveThread implements Runnable{
                 ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
                 Message message = (Message) ois.readObject();
                 /**
-                 * 实现群发
+                 * 根据消息类型实现不同的转发方式
                  */
                 if (message.getType().equals("group")){
                     ServerThread.sendmsgtoall(message);

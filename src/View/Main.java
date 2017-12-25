@@ -1,7 +1,9 @@
 package View;
 
 import client.ChatContentcollection;
+import client.ChatContentcollection2;
 import client.ClientReciveThread;
+import dao.Groupdao;
 import dao.Userdao;
 import model.Message;
 
@@ -36,7 +38,7 @@ public class Main {
     public Main() throws SQLException {
 //        JPanel_chatwindow.setVisible(false);
         Lable_username.setText(Userdao.getusernamebyaccount(account));
-        Thread t = new Thread(new ClientReciveThread(s,textArea_msglist,list1,list2,account));
+        Thread t = new Thread(new ClientReciveThread(s, textArea_msglist, list1, list2, account));
         t.start();
 
         button_send.addMouseListener(new MouseAdapter() {
@@ -47,22 +49,26 @@ public class Main {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 message.setTime(sdf.format(date));
                 try {
-                    if (list1.getSelectedValue()==null&&list2.getSelectedValue()!=null){
+                    if (list1.getSelectedValue() == null && list2.getSelectedValue() != null) {
                         message.setType("group");
                         message.setGetter(list2.getSelectedValue().toString());
-                    }else if(list1.getSelectedValue()!=null&&list2.getSelectedValue()==null){
+
+                        String content = ChatContentcollection2.getContent(Groupdao.getgroupnumber(list2.getSelectedValue().toString()));
+                        content += "\t\t\t\tMe:" + message.getContent() + "\n\r";
+                        ChatContentcollection2.addContent(Groupdao.getgroupnumber(list2.getSelectedValue().toString()), content);
+                    } else if (list1.getSelectedValue() != null && list2.getSelectedValue() == null) {
                         message.setType("personal");
                         message.setGetter(list1.getSelectedValue().toString());
 
                         String content = ChatContentcollection.getContent(Userdao.getaccountbyusername(list1.getSelectedValue().toString()));
-                        content +="\t\t\t\tMe:" + message.getContent() + "\n\r";
-                        ChatContentcollection.addContent(Userdao.getaccountbyusername(list1.getSelectedValue().toString()),content);
-                    }else{
+                        content += "\t\t\t\tMe:" + message.getContent() + "\n\r";
+                        ChatContentcollection.addContent(Userdao.getaccountbyusername(list1.getSelectedValue().toString()), content);
+                    } else {
                         textArea_msglist.append("选择用户列表错误！\n\r");
                         return;
                     }
                     message.setSender(account);
-                }catch (Exception e1){
+                } catch (Exception e1) {
                     textArea_msglist.append("请选择发送对象\n\r");
                     return;
                 }
@@ -72,7 +78,7 @@ public class Main {
                     textArea_msglist.append("与服务器连接断开，请重新尝试连接服务器！\n\r");
                     return;
                 }
-                textArea_msglist.append("\t\t\t\tMe:"+message.getContent()+"\n\r");
+                textArea_msglist.append("\t\t\t\tMe:" + message.getContent() + "\n\r");
                 textField_msgsend.setText("");
             }
         });
@@ -101,11 +107,16 @@ public class Main {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
+                    if (list1.getSelectedValue()==null) {
+                        return;
+                    }
                     Lable_name.setText(list1.getSelectedValue().toString());
-                    list2.clearSelection();
+                    if (!list2.isSelectionEmpty()) {
+                        list2.clearSelection();
+                    }
                     try {
                         String content = ChatContentcollection.getContent(Userdao.getaccountbyusername(list1.getSelectedValue().toString()));
-                        if (content==null){
+                        if (content == null) {
                             content = "";
                         }
                         textArea_msglist.setText(content);
@@ -116,15 +127,46 @@ public class Main {
             }
         });
 
-        list2.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                Lable_name.setText(list2.getSelectedValue().toString());
-                list1.clearSelection();
-//                textArea_msglist.setText(ChatContentcollection.getContent(list2.getSelectedValue().toString()));
+//        list2.addMouseListener(new MouseAdapter() {
+//            public void mouseClicked(MouseEvent e) {
+//                Lable_name.setText(list2.getSelectedValue().toString());
+//                list1.clearSelection();
+//                try {
+//                    String content = ChatContentcollection2.getContent(Groupdao.getgroupnumber(list2.getSelectedValue().toString()));
+//                    if (content == null) {
+//                        content = "";
+//                    }
+//                    textArea_msglist.setText(content);
+//                } catch (SQLException e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+//        });
+//    }
+
+        list2.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()){
+                    if (list2.getSelectedValue()==null) {
+                        return;
+                    }
+                    Lable_name.setText(list2.getSelectedValue().toString());
+                    if (!list1.isSelectionEmpty()) {
+                        list1.clearSelection();
+                    }
+                    try {
+                        String content = ChatContentcollection2.getContent(Groupdao.getgroupnumber(list2.getSelectedValue().toString()));
+                        if (content==null){
+                            content = "";
+                        }
+                        textArea_msglist.setText(content);
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
+                }
             }
         });
-
-
     }
 
     public static void RunMain(String account1, Socket socket) throws SQLException {
