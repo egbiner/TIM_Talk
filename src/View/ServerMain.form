@@ -41,16 +41,21 @@
               <text value="发送"/>
             </properties>
           </component>
-          <component id="55ba6" class="javax.swing.JTextArea" binding="textArea1_msglist">
+          <scrollpane id="e6c20">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="650" height="50"/>
-              </grid>
+              <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties>
-              <font size="18"/>
-            </properties>
-          </component>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="55ba6" class="javax.swing.JTextArea" binding="textArea1_msglist">
+                <constraints/>
+                <properties>
+                  <font size="18"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
         </children>
       </grid>
       <grid id="4b9a0" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

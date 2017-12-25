@@ -10,6 +10,8 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ServerMain {
     private JPanel JPanle1;
@@ -58,8 +60,10 @@ public class ServerMain {
                 message.setContent(textField1_msgwrite.getText());
                 message.setSender("SystemInfo");
                 message.setType("normal");
+                Date date = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                message.setTime(sdf.format(date));
                 ServerThread.serversendmsg(message);
-
                 textArea1_msglist.append(message.getContent()+"\n\r");
                 textField1_msgwrite.setText("");
             }

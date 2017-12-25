@@ -17,14 +17,14 @@ import java.sql.SQLException;
  */
 public class ClientReciveThread implements Runnable{
     private static Socket s;
-    private JTextArea textArea;
+    private static JTextArea textArea;
     private static JList jList_onlines;
     private static JList jList_groups;
     private static String account;
 
-    public ClientReciveThread(Socket socket, JTextArea textArea,JList jList,JList jList2,String ac) throws SQLException {
+    public ClientReciveThread(Socket socket, JTextArea jtextArea,JList jList,JList jList2,String ac) throws SQLException {
         s = socket;
-        this.textArea = textArea;
+        textArea = jtextArea;
         jList_onlines = jList;
         jList_groups = jList2;
         account = ac;
@@ -62,9 +62,32 @@ public class ClientReciveThread implements Runnable{
                     setonlines(message.getContent());
                     continue;
                 }
-                textArea.append(Userdao.getusernamebyaccount(message.getSender()) + " : " + message.getContent() + "\n\r");
+                /**
+                 * 思路：接收服务器转发过来的消息
+                 * 然后从集合中去除对应发送者账号的集合
+                 * 将接收到的信息添加到集合里面
+                 * 然后获取集合的内容展示
+                 */
+                if (message.getType().equals("personal")) {
+                    String content = ChatContentcollection.getContent(message.getSender());
+                    if (content == null) {
+                        content = "";
+                    }
+                    content += Userdao.getusernamebyaccount(message.getSender()) + "  " + message.getTime() + " \n\r" + message.getContent() + "\n\r";
+                    ChatContentcollection.addContent(message.getSender(), content);
+                    textArea.setText(ChatContentcollection.getContent(message.getSender()));
+                    //选中当前发送消息的人
+                    jList_onlines.setSelectedValue(Userdao.getusernamebyaccount(message.getSender()),false);
+
+                }else {
+                    //TODO 群发
+                }
+
+//                textArea.append(Userdao.getusernamebyaccount(message.getSender()) + "  " + message.getTime()+ " \n\r" + message.getContent() + "\n\r");
+
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(null, "与服务器连接断开，请重新登录", "连接失败", JOptionPane.PLAIN_MESSAGE);
+                textArea.append("与服务器断开连接！\n\r");
                 break;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();

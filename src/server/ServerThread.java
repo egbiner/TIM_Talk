@@ -1,5 +1,6 @@
 package server;
 
+import dao.Groupdao;
 import dao.Userdao;
 import model.Message;
 
@@ -14,16 +15,16 @@ import java.sql.SQLException;
 public class ServerThread implements Runnable{
     private ServerSocket serverSocket;
     private JLabel label;
-    private JTextArea textArea;
+    private static JTextArea textArea;
     private String account;
     private static boolean isstart = true;
     private static JList list_users;
     private static JLabel Lable_usersnum;
 
-    public ServerThread(ServerSocket serverSocket,JLabel label,JTextArea textArea,JList jList,JLabel jLabel,String account){
+    public ServerThread(ServerSocket serverSocket,JLabel label,JTextArea jtextArea,JList jList,JLabel jLabel,String account){
         this.serverSocket = serverSocket;
         this.label = label;
-        this.textArea = textArea;
+        textArea = jtextArea;
         this.account = account;
         list_users = jList;
         Lable_usersnum  = jLabel;
@@ -36,21 +37,7 @@ public class ServerThread implements Runnable{
         account = message.getContent();
     }
 
-    /**
-     * 群发消息
-     * @param message
-     */
-    public static void serversendmsg(Message message){
-        try {
-            String[] onlines = ServerCollection.GetOnline().split(" ");
-            for (String online:onlines) {
-                ObjectOutputStream oos = new ObjectOutputStream(ServerCollection.get(online).getSocket().getOutputStream());
-                oos.writeObject(message);
-            }
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-    }
+
 
     public void run() {
         while (isstart){
@@ -87,10 +74,27 @@ public class ServerThread implements Runnable{
         String[] strings = onlines.split(" ");
         DefaultListModel<String> listModel = new DefaultListModel<String>();
         for (String s:strings) {
+            if (s.equals("")){
+                break;
+            }
             listModel.addElement(Userdao.getusernamebyaccount(s));
         }
         Lable_usersnum.setText("在线人数:"+listModel.size());
         list_users.setModel(listModel);
+    }
+    /**
+     * 群发消息
+     */
+    public static void serversendmsg(Message message){
+        try {
+            String[] onlines = ServerCollection.GetOnline().split(" ");
+            for (String online:onlines) {
+                ObjectOutputStream oos = new ObjectOutputStream(ServerCollection.get(online).getSocket().getOutputStream());
+                oos.writeObject(message);
+            }
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 
     /**
@@ -111,13 +115,26 @@ public class ServerThread implements Runnable{
     /**
      *服务器转发群消息 不包括发送消息的人
      */
-    public static void sendmsgtoall(Message message) throws IOException {
-        String[] onlines = ServerCollection.GetOnline().split(" ");
-        for (String online:onlines) {
-            if (online.equals(message.getSender())){ //跳过发送者
+    public static void sendmsgtoall(Message message) throws IOException, SQLException {
+//        String[] onlines = ServerCollection.GetOnline().split(" ");
+//        for (String online:onlines) {
+//            if (online.equals(message.getSender())){ //跳过发.送者
+//                continue;
+//            }
+//            ServerReciveThread serverReciveThread = ServerCollection.get(online);
+//            ObjectOutputStream oos = new ObjectOutputStream(serverReciveThread.getSocket().getOutputStream());
+//            oos.writeObject(message);
+//        }
+        String[] users = Groupdao.getMembers(Groupdao.getgroupnumber(message.getGetter())).split(" ");
+        for (String user:users) {
+            if (user.equals(message.getSender())){
                 continue;
             }
-            ServerReciveThread serverReciveThread = ServerCollection.get(online);
+            ServerReciveThread serverReciveThread = ServerCollection.get(user);
+            //当用户不在线的时候 不发送
+            if (serverReciveThread==null){
+                continue;
+            }
             ObjectOutputStream oos = new ObjectOutputStream(serverReciveThread.getSocket().getOutputStream());
             oos.writeObject(message);
         }
@@ -127,7 +144,11 @@ public class ServerThread implements Runnable{
      */
     public static void sendmsgpersonal(Message message) throws SQLException, IOException {
         ServerReciveThread serverReciveThread = ServerCollection.get(Userdao.getaccountbyusername(message.getGetter()));
-        ObjectOutputStream oos = new ObjectOutputStream(serverReciveThread.getSocket().getOutputStream());
-        oos.writeObject(message);
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(serverReciveThread.getSocket().getOutputStream());
+            oos.writeObject(message);
+        }catch (Exception e){
+            textArea.append(message.getGetter() + "未上线!\n\r");
+        }
     }
 }

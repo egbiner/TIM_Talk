@@ -39,9 +39,11 @@ public class ServerReciveThread implements Runnable{
                     ServerThread.sendmsgtoall(message);
                 }else if (message.getType().equals("personal")){
                     ServerThread.sendmsgpersonal(message);
+                }else {
+                    textArea.append("获取用户信息发送类型发生错误!\n\r");
                 }
 
-                textArea.append(Userdao.getusernamebyaccount(message.getSender())+": to :"+message.getGetter()+":"+message.getContent()+"\n\r");
+                textArea.append(Userdao.getusernamebyaccount(message.getSender())+": to :"+message.getGetter()+": "+message.getContent()+"\n\r");
 
             } catch (IOException e) {
                 textArea.append("客户端"+account+"已经断开连接\n\r");

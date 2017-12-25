@@ -25,7 +25,7 @@ public class Groupdao {
     }
 
     /**
-     *
+     *通过群名获取群号
      */
     public static String getgroupnumber(String name) throws SQLException {
         Connection conn = DButil.getConn();
@@ -37,6 +37,23 @@ public class Groupdao {
             return rs.getString("groupnumber");
         }else{
             return new String("error");
+        }
+    }
+
+    /**
+     * 获取群成员
+     */
+    public static String getMembers(String groupnumber) throws SQLException {
+        String members = new String();
+        Connection conn = DButil.getConn();
+        String sql = "SELECT users FROM t_group WHERE groupnumber = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1,groupnumber);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()){
+            return rs.getString("users");
+        }else{
+            return "error";
         }
     }
 }
