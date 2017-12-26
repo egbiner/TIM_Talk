@@ -3,4 +3,4 @@
 
 用idea 中Swing guiform创建的窗体
 
-![image](https://raw.githubusercontent.com/egbiner/Pitures/master/7%7BH%24BJB2%25%5D27JO)KO%5BP~%5BT4.png)
+![小黄图](https://raw.githubusercontent.com/egbiner/Pitures/master/8B3UHYT11985BEMI)D%5DYA1Y.png)
