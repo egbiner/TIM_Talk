@@ -93,8 +93,8 @@ public class ClientReciveThread implements Runnable{
                     textArea.setText(ChatContentcollection2.getContent(Groupdao.getgroupnumber(message.getGetter())));
                     jList_groups.setSelectedValue(message.getGetter(),true);
 
-                }else{
-                    textArea.append("一个不为人知的消息类型突然冒出!令人感到害怕!\n\r");
+                }else if (message.getType().equals("System")){
+                    textArea.append(message.getSender()+"  " + message.getTime() + " \n\r " + message.getContent() + "\n\r");
                 }
 
 //                textArea.append(Userdao.getusernamebyaccount(message.getSender()) + "  " + message.getTime()+ " \n\r" + message.getContent() + "\n\r");
@@ -102,6 +102,11 @@ public class ClientReciveThread implements Runnable{
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(null, "与服务器连接断开，请重新登录", "连接失败", JOptionPane.PLAIN_MESSAGE);
                 textArea.append("与服务器断开连接！\n\r");
+                try {
+                    Userdao.putlogin(account);
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
                 break;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();

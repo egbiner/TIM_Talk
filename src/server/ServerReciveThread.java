@@ -48,8 +48,8 @@ public class ServerReciveThread implements Runnable{
             } catch (IOException e) {
                 textArea.append("客户端"+account+"已经断开连接\n\r");
                 ServerCollection.remove(account);
-
                 try {
+                    Userdao.putlogin(account);
                     ServerThread.setonlines(ServerCollection.GetOnline());
 //                    ServerThread.sendonlines();
                 } catch (SQLException e1) {

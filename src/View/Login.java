@@ -30,13 +30,16 @@ public class Login {
                 password = new String(passwordField.getPassword());
                 User u = new User(account,password);
                 try {
-                    if(new Userdao().login(u)==1){
+                    if(Userdao.login(u)==1&&Userdao.islogin(u.getAccount())==0){
                         //打开主窗口
                         Socket s = new Socket("127.0.0.1",2333);
                         //发送登录信息给服务器
                         sendlogininfo(s);
                         Main.RunMain(account,s);
+                        Userdao.setlogin(u.getAccount());
                         jFramemod.dispose();
+                    }else if (Userdao.islogin(u.getAccount())==1){
+                        JOptionPane.showMessageDialog(null, "用户已经登录", "登陆失败", JOptionPane.PLAIN_MESSAGE);
                     }else{
                         JOptionPane.showMessageDialog(null, "用户名或密码错误", "登陆失败", JOptionPane.PLAIN_MESSAGE);
                     }

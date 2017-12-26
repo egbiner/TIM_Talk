@@ -204,4 +204,36 @@ public class Userdao {
         ps.setString(2, password);
         return ps.executeUpdate();
     }
+
+    /**
+     * islogin
+     */
+    public static int islogin(String account) throws SQLException {
+        Connection conn = DButil.getConn();
+        String sql = "SELECT * FROM user WHERE account = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, account);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()){
+            return Integer.parseInt(rs.getString("islogin"));
+        }else{
+            return -1;
+        }
+    }
+
+    public static void setlogin(String account) throws SQLException {
+        Connection conn = DButil.getConn();
+        String sql = "UPDATE user SET islogin=1 WHERE account = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, account);
+        ps.execute();
+    }
+
+    public static void putlogin(String account) throws SQLException {
+        Connection conn = DButil.getConn();
+        String sql = "UPDATE user SET islogin=0 WHERE account = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, account);
+        ps.execute();
+    }
 }

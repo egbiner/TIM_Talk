@@ -58,8 +58,8 @@ public class ServerMain {
             public void mouseClicked(MouseEvent e) {
                 Message message = new Message();
                 message.setContent(textField1_msgwrite.getText());
-                message.setSender("SystemInfo");
-                message.setType("normal");
+                message.setSender("系统消息");
+                message.setType("System");
                 Date date = new Date();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 message.setTime(sdf.format(date));

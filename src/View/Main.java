@@ -83,25 +83,6 @@ public class Main {
             }
         });
 
-/*        list1.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-//                System.out.println(list1.getAnchorSelectionIndex());
-//                System.out.println(list1.getSelectedValue());
-//                JPanel_chatwindow.setVisible(true);
-//                Chatwindowcollection.addJPanel(account,JPanel_chatwindow);
-                Lable_name.setText(list1.getSelectedValue().toString());
-                list2.clearSelection();
-                try {
-                    String content = ChatContentcollection.getContent(Userdao.getaccountbyusername(list1.getSelectedValue().toString()));
-                    if (content==null){
-                        content = new String();
-                    }
-                    textArea_msglist.setText(content);
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        });*/
 
         list1.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -126,23 +107,6 @@ public class Main {
                 }
             }
         });
-
-//        list2.addMouseListener(new MouseAdapter() {
-//            public void mouseClicked(MouseEvent e) {
-//                Lable_name.setText(list2.getSelectedValue().toString());
-//                list1.clearSelection();
-//                try {
-//                    String content = ChatContentcollection2.getContent(Groupdao.getgroupnumber(list2.getSelectedValue().toString()));
-//                    if (content == null) {
-//                        content = "";
-//                    }
-//                    textArea_msglist.setText(content);
-//                } catch (SQLException e1) {
-//                    e1.printStackTrace();
-//                }
-//            }
-//        });
-//    }
 
         list2.addListSelectionListener(new ListSelectionListener() {
             @Override
