@@ -19,9 +19,12 @@ public class Login {
     private JButton LoginButton;
     private JTextField textFieldAccount;
     private JPasswordField passwordField;
+    private JButton Button_register;
+    private JButton button_setport;
     private static JFrame jFramemod;
     private String account;
     private String password;
+    private int port = 2333;
 
     public Login() {
         LoginButton.addMouseListener(new MouseAdapter() {
@@ -32,7 +35,7 @@ public class Login {
                 try {
                     if(Userdao.login(u)==1&&Userdao.islogin(u.getAccount())==0){
                         //打开主窗口
-                        Socket s = new Socket("127.0.0.1",2333);
+                        Socket s = new Socket("127.0.0.1",port);
                         //发送登录信息给服务器
                         sendlogininfo(s);
                         Main.RunMain(account,s);
@@ -48,8 +51,24 @@ public class Login {
                 } catch (UnknownHostException e1) {
                     e1.printStackTrace();
                 } catch (IOException e1) {
-                    JOptionPane.showMessageDialog(null, "请检查服务器状态", "登陆失败", JOptionPane.PLAIN_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "请检查服务器状态或端口", "登陆失败", JOptionPane.PLAIN_MESSAGE);
                 }
+            }
+        });
+        button_setport.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    port = Integer.parseInt(JOptionPane.showInputDialog(null,"请输入端口号(默认2333)：\n","2333"));
+                }catch (Exception e1){
+
+                }
+            }
+        });
+        Button_register.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Register.RunRegister();
             }
         });
     }

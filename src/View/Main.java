@@ -3,6 +3,7 @@ package View;
 import client.ChatContentcollection;
 import client.ChatContentcollection2;
 import client.ClientReciveThread;
+import client.MyCellRenderer;
 import dao.Groupdao;
 import dao.Userdao;
 import model.Message;
@@ -37,6 +38,14 @@ public class Main {
 
     public Main() throws SQLException {
 //        JPanel_chatwindow.setVisible(false);
+        Icon icon1 = new ImageIcon("D:\\Java课程设计\\TIM_Talk\\img\\g2.jpg");
+        Icon icon2 = new ImageIcon("D:\\Java课程设计\\TIM_Talk\\img\\g2.jpg");
+        Icon icon3 = new ImageIcon("D:\\Java课程设计\\TIM_Talk\\img\\g2.jpg");
+        Icon[] icons = { icon1, icon2, icon3};
+        list1.setCellRenderer(new MyCellRenderer(icons));
+
+        ImageIcon imageIcon = new ImageIcon("D:\\Java课程设计\\TIM_Talk\\img\\g2.jpg");
+        Lable_icon.setIcon(imageIcon);
         Lable_username.setText(Userdao.getusernamebyaccount(account));
         Thread t = new Thread(new ClientReciveThread(s, textArea_msglist, list1, list2, account));
         t.start();

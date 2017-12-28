@@ -11,6 +11,8 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ServerThread implements Runnable{
     private ServerSocket serverSocket;
@@ -20,15 +22,16 @@ public class ServerThread implements Runnable{
     private static boolean isstart = true;
     private static JList list_users;
     private static JLabel Lable_usersnum;
+    private static JTextArea textArea_state;
 
-    public ServerThread(ServerSocket serverSocket,JLabel label,JTextArea jtextArea,JList jList,JLabel jLabel,String account){
+    public ServerThread(ServerSocket serverSocket,JLabel label,JTextArea jtextArea,JList jList,JLabel jLabel,String account,JTextArea textArea2_state){
         this.serverSocket = serverSocket;
         this.label = label;
         textArea = jtextArea;
         this.account = account;
         list_users = jList;
         Lable_usersnum  = jLabel;
-
+        textArea_state = textArea2_state;
     }
 
     public void recivelogininfo(Socket socket) throws IOException, ClassNotFoundException {
@@ -37,17 +40,17 @@ public class ServerThread implements Runnable{
         account = message.getContent();
     }
 
-
-
     public void run() {
         while (isstart){
             try {
                 Socket s = serverSocket.accept();
                 recivelogininfo(s);
-                ServerReciveThread serverReciveThread = new ServerReciveThread(account,s,label,textArea);
+                ServerReciveThread serverReciveThread = new ServerReciveThread(account,s,label,textArea,textArea_state);
                 ServerCollection.add(account,serverReciveThread);
                 Thread t = new Thread(serverReciveThread);
                 t.start();
+                textArea_state.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+"    用户:"
+                +account+"("+ Userdao.getusernamebyaccount(account)+ ") 上线！\n\r");
 
                 setonlines(ServerCollection.GetOnline());
 //                sendonlines();

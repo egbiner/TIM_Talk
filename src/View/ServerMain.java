@@ -23,6 +23,9 @@ public class ServerMain {
     private JButton button_sendmsg;
     private JLabel Lable_usersnum;
     private JLabel Lable_serverisstart;
+    private JTabbedPane tabbedPane1;
+    private JTextArea textArea2_state;
+    private JTextField textFiled_port;
     private Socket s;
     private ServerSocket serverSocket;
 
@@ -30,12 +33,15 @@ public class ServerMain {
         Button_start.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 try {
-                    serverSocket = new ServerSocket(2333);
+                    int port = Integer.parseInt(textFiled_port.getText());
+                    serverSocket = new ServerSocket(port);
                     String account ="";
-                    Thread t = new Thread(new ServerThread(serverSocket,Lable_usersnum,textArea1_msglist,list_users,Lable_usersnum,account));
+                    Thread t = new Thread(new ServerThread(serverSocket,Lable_usersnum,textArea1_msglist,list_users,Lable_usersnum,account,textArea2_state));
                     t.start();
                     Button_start.setEnabled(false);
+                    textFiled_port.setEnabled(false);
                     Lable_serverisstart.setText("运行中");
+                    textArea2_state.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+"   服务器开启!\n\r");
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
