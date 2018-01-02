@@ -189,20 +189,32 @@ public class Userdao {
      * @return
      * @throws SQLException
      */
-    public static int Register(String username, String password) throws SQLException {
+    public static String Register(String username, String password,String email) throws SQLException {
         Connection conn = DButil.getConn();
         //判断用户名是否重复
         PreparedStatement ps1 = conn.prepareStatement("SELECT * FROM user WHERE username=?");
         ps1.setString(1, username);
         ResultSet rs = ps1.executeQuery();
         while (rs.next()) {
-            return -1;
+            return "error";
         }
-        String sql = "INSERT INTO user (username,password) VALUES (?,?)";
+        int ac = (int)((Math.random()*9+1)*100000);
+        String account = Integer.toString(ac);
+        while (!getusernamebyaccount(account).equals("error")){
+            //账号已被注册
+            ac = (int)((Math.random()*9+1)*100000);
+            account = Integer.toString(ac);
+        }
+        String sql = "INSERT INTO user (account,username,password,email,friend,groups,islogin) VALUES (?,?,?,?,?,?,0)";
         PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, username);
-        ps.setString(2, password);
-        return ps.executeUpdate();
+        ps.setString(1,account);
+        ps.setString(2, username);
+        ps.setString(3, password);
+        ps.setString(4,email);
+        ps.setString(5,"123456 ");
+        ps.setString(6,"654321 ");
+        ps.executeUpdate();
+        return account;
     }
 
     /**

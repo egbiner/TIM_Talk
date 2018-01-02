@@ -12,17 +12,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ServerReciveThread implements Runnable{
-    private Socket s;
+    private static Socket s;
     private JTextArea textArea;
     private JLabel label;
     private String account;
     private JTextArea textArea_state;
+    private static boolean isrun = true;
 
-    public ServerReciveThread(String account,Socket s,JLabel label,JTextArea textArea,JTextArea textArea2_state){
+    public ServerReciveThread(String account,Socket socket,JLabel label,JTextArea textArea,JTextArea textArea2_state){
         this.account = account;
         this.label = label;
         this.textArea = textArea;
-        this.s = s;
+        s = socket;
         this.textArea_state = textArea2_state;
     }
 
@@ -31,7 +32,7 @@ public class ServerReciveThread implements Runnable{
     }
 
     public void run() {
-        while(true){
+        while(isrun){
             try {
                 ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
                 Message message = (Message) ois.readObject();
@@ -66,5 +67,10 @@ public class ServerReciveThread implements Runnable{
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void closeThread() throws IOException {
+        isrun = false;
+        s.close();
     }
 }

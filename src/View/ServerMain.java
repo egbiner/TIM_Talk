@@ -1,15 +1,22 @@
 package View;
 
+import dao.Userdao;
 import model.Message;
+import server.ServerCollection;
+import server.ServerReciveThread;
 import server.ServerThread;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -72,6 +79,28 @@ public class ServerMain {
                 ServerThread.serversendmsg(message);
                 textArea1_msglist.append(message.getContent()+"\n\r");
                 textField1_msgwrite.setText("");
+            }
+        });
+        /**
+         * 踢下线
+         */
+        list_users.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if(JOptionPane.showConfirmDialog(null,"是否将"+list_users.getSelectedValue()+"他踢下线?")==0){
+                    try {
+                        String account = Userdao.getaccountbyusername(list_users.getSelectedValue().toString());
+                        ServerCollection.get(account).closeThread();
+                        ServerCollection.remove(account);
+                        Userdao.putlogin(account);
+                        textArea2_state.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+"   "+list_users.getSelectedValue().toString()+"已被系统踢下线！\n\r");
+                        ServerThread.setonlines(ServerCollection.GetOnline());
+                        //TODO
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
             }
         });
     }
