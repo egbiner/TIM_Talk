@@ -33,6 +33,8 @@ public class Main {
     private JList list2;
     private JLabel Lable_username;
     private JLabel Lable_icon;
+    private JPanel tp1;
+    private JPanel tp2;
     private static String account;
     private static Socket s;
 
